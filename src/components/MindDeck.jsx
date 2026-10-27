@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { MIND_PAGE3_WINDOW_T, MIND_STACK_UNITS } from './MindPages'
+import { assetUrl } from '../assetUrl'
 
 // ============================================================
 // THE MIND · Page 3 — 扇形疊圖（poem1 / ep1 / ep2）
@@ -103,7 +104,7 @@ export default function MindDeck({ items }) {
           }}
         >
           <a href={item.href} target="_blank" rel="noopener noreferrer" aria-label={item.alt}>
-            <img src={item.src} alt={item.alt} draggable="false" />
+            <img src={assetUrl(item.src)} alt={item.alt} draggable="false" />
           </a>
         </div>
       ))}

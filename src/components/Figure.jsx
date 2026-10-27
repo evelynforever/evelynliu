@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+import { assetUrl } from '../assetUrl'
+
 /**
  * 人物主視覺。
  * - 正式圖片路徑：/public/evelyn.png → 瀏覽器網址 /evelyn.png
@@ -34,7 +36,7 @@ export default function Figure({ motionRef }) {
         ) : (
           <img
             className="figure-img"
-            src="/evelyn.png"
+            src={assetUrl('/evelyn.png')}
             alt=""
             draggable={false}
             onError={() => setImgFailed(true)}

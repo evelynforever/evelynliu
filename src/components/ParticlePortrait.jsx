@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import '../styles/particle-portrait.css'
+import { assetUrl } from '../assetUrl'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -22,7 +23,7 @@ gsap.registerPlugin(ScrollTrigger)
    旋轉角由頁面滾動進度驅動（ScrollTrigger），不滾動則人物靜止。
    ============================================================ */
 
-const IMAGE_URL = '/evelyn-cutout.png'
+const IMAGE_URL = assetUrl('/evelyn-cutout.png')
 
 // -------- 可調整參數（全部集中在這裡） --------
 const ALPHA_THRESHOLD = 32 // alpha 高於此值才生成粒子（0–255）

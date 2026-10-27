@@ -1,4 +1,5 @@
 import { GROUND_ESSAY } from '../content/groundEssay'
+import { assetUrl } from '../assetUrl'
 import '../styles/ground-opening.css'
 
 // ============================================================
@@ -24,7 +25,7 @@ export default function GroundOpening() {
         <span className="ground-opening__word">Courage</span>
       </div>
       <div className="ground-opening__photo">
-        <img src="/graduate%20school.jpg" alt="" />
+        <img src={assetUrl('/graduate%20school.jpg')} alt="" />
       </div>
     </section>
   )

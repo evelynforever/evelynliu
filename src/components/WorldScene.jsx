@@ -4,6 +4,7 @@ import gsap from 'gsap'
 import '../styles/world-scene.css'
 import { TREE_VIEW, GROW_PATHS, LEAF_SPOTS, LEAF_FADE_DUR, DURATION_SCALE } from './worldGrowth'
 import { LEAF_COMPANIES } from './worldLeaves'
+import { assetUrl } from '../assetUrl'
 
 // ============================================================
 // THE WORLD · tree.jpg 生長動畫（Botanical Growth Time-lapse）
@@ -311,7 +312,7 @@ export default function WorldScene() {
             </mask>
           </defs>
           <image
-            href="/tree.jpg"
+            href={assetUrl('/tree.jpg')}
             x="0"
             y="0"
             width={VW}
@@ -388,7 +389,7 @@ export default function WorldScene() {
                         top: `${((c.leafArt.y - (spot.cy - hitR)) / (hitR * 2)) * 100}%`,
                         width: `${(c.leafArt.w / (hitR * 2)) * 100}%`,
                         height: `${(c.leafArt.h / (hitR * 2)) * 100}%`,
-                        backgroundImage: `url(${c.leafArt.src})`,
+                        backgroundImage: `url(${assetUrl(c.leafArt.src)})`,
                         // 六片葉子錯開擺動節奏，避免整片樹同時閃動
                         animationDelay: `${i * 0.9}s`,
                       }}

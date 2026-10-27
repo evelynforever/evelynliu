@@ -1,4 +1,5 @@
 import MindDeck from './MindDeck'
+import { assetUrl } from '../assetUrl'
 import '../styles/mind-page1.css'
 
 // ============================================================
@@ -32,7 +33,7 @@ export default function MindStoryPage({
       {/* 鋪滿背景 + 淺灰米灰遮罩（濃淡在 CSS 變數調整） */}
       <div
         className="mind-page__photo"
-        style={{ backgroundImage: `url('${photoSrc}')` }}
+        style={{ backgroundImage: `url('${assetUrl(photoSrc)}')` }}
         aria-hidden="true"
       />
       <div className="mind-page__veil" aria-hidden="true" />
@@ -93,12 +94,16 @@ export default function MindStoryPage({
             >
               <img
                 className="mind-page__aside mind-page__aside--linked"
-                src={asideImage}
+                src={assetUrl(asideImage)}
                 alt={asideAlt}
               />
             </a>
           ) : (
-            <img className="mind-page__aside" src={asideImage} alt={asideAlt} />
+            <img
+              className="mind-page__aside"
+              src={assetUrl(asideImage)}
+              alt={asideAlt}
+            />
           ))
         )}
         <p>

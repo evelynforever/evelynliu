@@ -3,6 +3,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 import { GROUND_ESSAY } from '../content/groundEssay'
+import { assetUrl } from '../assetUrl'
 import '../styles/mind-to-ground-transition.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -59,17 +60,17 @@ function PhotoStrip({ stripRef }) {
   return (
     <div className="photo-strip" ref={stripRef}>
       <div className="photo-frame">
-        <img src="/classroom.jpg" alt="" />
+        <img src={assetUrl('/classroom.jpg')} alt="" />
       </div>
       <div className="photo-frame">
-        <img src="/jiazhanghui.jpg" alt="" />
+        <img src={assetUrl('/jiazhanghui.jpg')} alt="" />
       </div>
       <div className="photo-frame">
-        <img src="/zhanban.jpg" alt="" />
+        <img src={assetUrl('/zhanban.jpg')} alt="" />
       </div>
       {/* shudong.jpg 是豎圖（3:4），用豎版相框完整顯示，高度與其他照片一致 */}
       <div className="photo-frame photo-frame--portrait">
-        <img src="/shudong.jpg" alt="" />
+        <img src={assetUrl('/shudong.jpg')} alt="" />
       </div>
     </div>
   )
@@ -471,7 +472,7 @@ export default function MindToGroundTransition() {
           <img
             ref={gradRef}
             className="mgt__image"
-            src="/graduate%20school.jpg"
+            src={assetUrl('/graduate%20school.jpg')}
             alt=""
           />
         </div>

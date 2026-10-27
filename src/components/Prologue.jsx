@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 import SideNav from './SideNav'
 import { PROLOGUE_LINES } from '../content/prologue'
+import { assetUrl } from '../assetUrl'
 import '../styles/prologue.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -24,7 +25,7 @@ const DEBUG = true
 const STEP = 1.2
 const travelDistance = () => window.innerHeight * 0.62
 
-const SRC = '/evelyn-cover.png'
+const SRC = assetUrl('/evelyn-cover.png')
 
 /* 人物必須在此 timeline 時間點 100% 完成。
    最後一句 fully visible ≈ t 3.60（master 0.75），此值提前約 0.15s */

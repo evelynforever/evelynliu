@@ -3,6 +3,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 import '../styles/leap-gallery.css'
+import { assetUrl } from '../assetUrl'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -160,7 +161,7 @@ export default function LeapGallery() {
               photoRefs.current[i] = el
             }}
             className={`leap__photo ${photo.portrait ? 'leap__photo--portrait' : 'leap__photo--landscape'}`}
-            src={photo.src}
+            src={assetUrl(photo.src)}
             alt=""
             loading="lazy"
             draggable="false"
@@ -171,7 +172,7 @@ export default function LeapGallery() {
         <img
           ref={heroRef}
           className="leap__hero"
-          src="/首图.png"
+          src={assetUrl('/首图.png')}
           alt="Exchange program at Ca' Foscari, Venice"
         />
       </div>

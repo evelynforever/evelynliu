@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import '../styles/contact-scene.css'
+import { assetUrl } from '../assetUrl'
 
 // ============================================================
 // CONTACT · 手持合作聯繫卡插畫
@@ -63,7 +64,7 @@ export default function ContactScene() {
       <div ref={stageRef} className="contact-scene__stage">
         <img
           className="contact-scene__img"
-          src="/contact.jpg"
+          src={assetUrl('/contact.jpg')}
           alt="A hand holding a card that reads Let's work together, with a contact box for Evelyn Liu"
           draggable="false"
         />
@@ -83,7 +84,7 @@ export default function ContactScene() {
           >
             <img
               className="contact-scene__zoom"
-              src="/contact-box.png"
+              src={assetUrl('/contact-box.png')}
               alt=""
               aria-hidden="true"
               draggable="false"

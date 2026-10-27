@@ -6,6 +6,7 @@ import MindPage1 from './MindPage1'
 import MindPage2 from './MindPage2'
 import MindPage3 from './MindPage3'
 import '../styles/mind-pages.css'
+import { assetUrl } from '../assetUrl'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -161,7 +162,7 @@ export default function MindPages() {
           <div
             key={bg.src}
             className={'mind-stack__bg' + (bg.mono ? ' mind-stack__bg--mono' : '')}
-            style={{ backgroundImage: `url('${bg.src}')` }}
+            style={{ backgroundImage: `url('${assetUrl(bg.src)}')` }}
             aria-hidden="true"
           />
         ))}
