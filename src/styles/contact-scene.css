@@ -1,0 +1,137 @@
+/* ============================================================
+   CONTACT · 手持合作聯繫卡
+   插畫 cover 佈滿整個頁面；CONTACT 方框是可點擊熱區，
+   hover 時方框輕微放大。無卡片、無按鈕樣式，保持畫面完整。
+   ============================================================ */
+
+.contact-scene {
+  position: relative;
+  height: 100vh;
+  background-color: #e9eada;
+}
+
+.contact-scene__stage {
+  position: relative;
+  height: 100vh;
+  /* 與其他章節一致：讓出左側導覽列寬度 */
+  width: calc(100% - 76px);
+  margin-left: 76px;
+  overflow: hidden;
+}
+
+.contact-scene__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  user-select: none;
+}
+
+/* CONTACT 方框熱區（不可見，精確覆蓋畫面中的方框） */
+.contact-scene__link {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.contact-scene__link:focus {
+  outline: none;
+}
+
+.contact-scene__link:focus-visible {
+  outline: 1px solid rgba(138, 127, 118, 0.9);
+  outline-offset: 4px;
+}
+
+/* hover 放大層：方框區域的同像素裁切，平時與底圖完全重合，
+   hover 時從中心輕微放大，像方框從卡面浮起 */
+.contact-scene__zoom {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  transform: scale(1);
+  transform-origin: center;
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.contact-scene__link:hover .contact-scene__zoom,
+.contact-scene__link:focus-visible .contact-scene__zoom {
+  transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-scene__zoom {
+    transition: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .contact-scene__stage {
+    width: calc(100% - 58px);
+    margin-left: 58px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-scene__stage {
+    width: calc(100% - 44px);
+    margin-left: 44px;
+  }
+
+  /* 窄屏完整顯示整張卡片，上下以紙色延伸，視覺上仍是整頁 */
+  .contact-scene__img {
+    object-fit: contain;
+  }
+
+  /* 觸控裝置加大方框的點擊範圍（不影響放大層定位） */
+  .contact-scene__link::after {
+    content: '';
+    position: absolute;
+    inset: -16px;
+  }
+}
+
+/* ============================================================
+   THE WORLD → CONTACT · 交接過場
+   外層 250vh 提供滾動行程，內層 sticky 舞台釘住畫面：
+   繼續上滑時樹頁先淡成只剩紙色（與樹頁底色相同），
+   短暫留白後，聯繫卡在同一紙面上如畫出般逐漸顯現。
+   節奏由 App.jsx 的 ScrollTrigger scrub 時間軸控制。
+   ============================================================ */
+
+.world-contact {
+  position: relative;
+  height: 250vh;
+}
+
+.world-contact__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  /* 紙色與樹頁底色一致：樹淡去後只剩這片紙 */
+  background-color: #f1f2e9;
+}
+
+.world-contact__stage .world-scene,
+.world-contact__stage .contact-scene {
+  position: absolute;
+  inset: 0;
+}
+
+/* 樹頁在上層先淡出；autoAlpha 歸零後自動 visibility:hidden，
+   葉片熱區不再攔截點擊 */
+.world-contact__stage .world-scene {
+  z-index: 2;
+}
+
+/* 聯繫卡在下層淡入；初始隱藏，交由 GSAP scrub 時間軸接管 */
+.world-contact__stage .contact-scene {
+  z-index: 1;
+  opacity: 0;
+}

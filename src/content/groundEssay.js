@@ -1,0 +1,5 @@
+// THE GROUND · 開篇文案（順序即排版順序，請勿調換）
+export const GROUND_ESSAY = [
+  'In 2023, I graduated with my bachelor’s and stepped into a primary school classroom. I prepared lessons, taught classes, graded assignments, organized performances, met with parents, and visited students at home. I took the responsibilities of teaching seriously. My students grew attached to me, and their parents expressed a trust I sometimes felt I had yet to earn. I loved the children—their openness, their unexpected questions, the affection they offered so freely. Even now, I think of them with tenderness and hope they are doing well.',
+  'Yet I knew I wanted a different life. Standing at the front of a classroom, I wished I could return to the other side of the desk. In fact, I had made my plan before I began teaching. I would work for a year, prepare for the graduate entrance exams, and return to studying literature. As that year drew to a close, I became increasingly certain of what I wanted. Teaching was meaningful, but it was not the path I wished to pursue. I knew it was time to trust my instincts and take my ambitions seriously.',
+]

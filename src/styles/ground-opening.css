@@ -1,0 +1,77 @@
+/* ============================================================
+   THE GROUND · 開篇（窄屏用）
+   桌面版隱藏：文案與校門照都在 MindToGroundTransition 的 pinned 舞台內完成，
+   緊接圓孔收黑、無空白滾動。窄屏改為單列靜態頁：文案 → 校門照。
+   ============================================================ */
+
+.ground-opening {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* 文案與疊影詞沿用深色底（與桌面收黑後的底色一致） */
+  .ground-opening {
+    display: block;
+    background-color: #3a3a3a;
+  }
+
+  .ground-opening__text {
+    padding: 110px 24px 64px 78px;
+  }
+
+  .ground-opening__text p {
+    margin: 0;
+    font-family: 'Spectral', Georgia, 'Times New Roman', serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.72;
+    letter-spacing: 0.012em;
+    color: #c8c3ba;
+  }
+
+  .ground-opening__text p + p {
+    margin-top: 1.1em;
+  }
+
+  /* 巨型疊影詞：靜態疊放，僅第一個詞高亮（桌面由 GSAP 隨滾動輪替） */
+  .ground-opening__words {
+    position: relative;
+    height: clamp(54px, 14vw, 96px);
+    margin: 52px 0 74px;
+  }
+
+  .ground-opening__word {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(26px, 8.2vw, 62px);
+    line-height: 0.9;
+    letter-spacing: 0.015em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: #d5d3cd;
+    opacity: 0.07;
+  }
+
+  .ground-opening__word.is-on {
+    opacity: 0.85;
+  }
+
+  /* 校門照：維持原圖豎向構圖，整寬顯示；
+     照片區之後底色轉為淺灰（與桌面照片進場後的底色一致） */
+  .ground-opening__photo {
+    background-color: #dedddb;
+    padding: 0 20px;
+  }
+
+  .ground-opening__photo img {
+    display: block;
+    /* 占頁面畫幅 2/3，左右均攤空隙 */
+    width: clamp(200px, 66.67vw, 600px);
+    height: auto;
+    margin: 0 auto;
+  }
+}

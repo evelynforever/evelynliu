@@ -1,0 +1,470 @@
+/* ============================================================
+   THE MIND · Page 1 — “The Girl Who Built Worlds”
+   editorial 固定編排（desktop-first，基準 1440 × 900）
+   所有位置 / 背景濃淡 / 字級都集中在本變數區，方便微調。
+   ============================================================ */
+
+.mind-page {
+  /* —— 版面座標（相對 SideNav 右側的可用區域） —— */
+  --mp-rail-left: 18.7%; /* 垂直時間軸與頁面左緣距離 */
+  --mp-node-top: 26.7%; /* 當前節點 marker（火箭）的垂直位置 */
+  --mp-year-gap: 98px; /* 年份中心與時間軸的水平距離 */
+  --mp-content-gap: 52px; /* 左上標題與時間軸的水平距離 */
+  --mp-intro-top: 11.5%; /* 左上內容區距頂部 */
+  --mp-quote-left: 47.5%; /* 右下大段文字起點（換算整屏 = 51%，對應參考圖 52.6%） */
+  --mp-quote-bottom: 9%; /* 右下大段文字距底部 */
+  --mp-quote-right: 3%; /* 右下大段文字距右緣（保留負空間） */
+
+  /* —— 背景濃淡（在這裡調整） —— */
+  --mp-photo-opacity: 0.6; /* 庭院原圖可見度（1 = 原圖全亮） */
+  --mp-veil-rgb: 219, 218, 214; /* 米灰遮罩色（整體接近 #d9d9d7） */
+  --mp-veil-opacity: 0.64; /* 遮罩濃度；原圖實際可見 ≈ photo×(1−veil) ≈ 22% */
+
+  /* —— 視覺色 —— */
+  --mp-ink: #1b1917;
+  --mp-dot: rgba(30, 30, 30, 0.42);
+
+  position: relative;
+  height: 100vh;
+  margin-left: 76px; /* 讓出固定 SideNav（桌面 76px） */
+  overflow: hidden;
+  background-color: rgb(var(--mp-veil-rgb));
+}
+
+/* ---------- 背景：cover / center，淡灰米遮罩 + 輕微去色 ---------- */
+
+.mind-page__photo {
+  position: absolute;
+  inset: 0;
+  /* 圖片由各頁元件經 inline style 傳入（Page 1 garden.jpg / Page 2 hubu.jpg） */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: grayscale(0.55) contrast(0.94) saturate(0.9);
+  opacity: var(--mp-photo-opacity);
+  z-index: 0;
+}
+
+/* Page 2：完全黑白、低對比、archive 老照片質感（濾鏡在此微調） */
+.mind-page--mono .mind-page__photo {
+  filter: grayscale(1) contrast(0.8) brightness(1.05);
+  opacity: 0.68;
+}
+
+.mind-page__veil {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(var(--mp-veil-rgb), var(--mp-veil-opacity));
+  z-index: 1;
+}
+
+/* ---------- 垂直 dotted timeline ---------- */
+
+.mind-page__rail {
+  position: absolute;
+  z-index: 2;
+  left: var(--mp-rail-left);
+  top: 3%;
+  bottom: 2.5%; /* 不碰頁面頂 / 底 */
+  width: 4px;
+  transform: translateX(-50%);
+  /* 用徑向漸層重複排列出一整串小圓點，而非連續實線 */
+  background-image: radial-gradient(circle, var(--mp-dot) 1.7px, transparent 1.8px);
+  background-size: 4px 27px;
+  background-position: center top;
+  background-repeat: repeat-y;
+}
+
+.mind-page__node {
+  position: absolute;
+  /* rail 本身上 3%、下 2.5%，換算使節點中心落在頁面的 --mp-node-top（與年份對齊） */
+  top: 25.1%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+  display: block;
+}
+
+.mind-page__node svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- 年份：完整數字縱向、淺灰、弱存在感 ---------- */
+
+.mind-page__year {
+  position: absolute;
+  z-index: 2;
+  top: var(--mp-node-top);
+  left: calc(var(--mp-rail-left) - var(--mp-year-gap));
+  transform: translate(-50%, -50%);
+  writing-mode: vertical-rl; /* 整組 2001 側向旋轉，不是逐字豎排 */
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(72px, 7.2vw, 110px);
+  line-height: 1;
+  letter-spacing: 0.03em;
+  color: rgba(30, 30, 30, 0.19);
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* ---------- 左上：標題 + 短描述 ---------- */
+
+.mind-page__intro {
+  position: absolute;
+  z-index: 2;
+  top: var(--mp-intro-top);
+  left: calc(var(--mp-rail-left) + var(--mp-content-gap));
+  max-width: 340px;
+}
+
+.mind-page__title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: clamp(32px, 2.5vw, 38px);
+  line-height: 1.15;
+  letter-spacing: 0.004em;
+  color: var(--mp-ink);
+  max-width: 320px;
+}
+
+.mind-page__desc {
+  margin-top: 20px;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(16px, 1.25vw, 19px);
+  line-height: 1.52;
+  color: #6d685f;
+  max-width: 360px;
+}
+
+/* ---------- 右下：大段 serif 文字（第二視覺重點） ---------- */
+
+.mind-page__quote {
+  position: absolute;
+  z-index: 2;
+  left: var(--mp-quote-left);
+  right: var(--mp-quote-right);
+  bottom: var(--mp-quote-bottom);
+  margin: 0;
+}
+
+.mind-page__quote p {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(34px, 2.6vw, 42px);
+  line-height: 1.32;
+  letter-spacing: 0.002em;
+  color: var(--mp-ink);
+}
+
+/* ---------- Page 2 專用：左側書籍照片 + 長文案（其餘視覺完全一致） ---------- */
+.mind-page--2 {
+  --mp-quote-left: 20%;
+  --mp-quote-right: 3%;
+  --mp-quote-bottom: 7.5%;
+}
+
+.mind-page__quote--with-image {
+  display: flex;
+  align-items: flex-end; /* 照片與文字底緣對齊 */
+  gap: clamp(34px, 3.2vw, 56px);
+}
+
+/* 僅控制大小，保留原始長寬比；不加 filter / 圓角 / 陰影等任何影像處理 */
+.mind-page__aside {
+  flex: 0 0 auto;
+  height: clamp(210px, 30vh, 300px);
+  width: auto;
+  max-width: 34%;
+}
+
+/* Page 2 書架照片放大為左側主要視覺（原圖 850×1130，寬高比 0.752） */
+.mind-page--2 .mind-page__aside {
+  height: clamp(320px, 56vh, 560px);
+  max-width: none;
+}
+
+.mind-page--2 .mind-page__quote p {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: clamp(26px, 2.08vw, 30px);
+  line-height: 1.4;
+}
+
+/* ============================================================
+   Page 3 — “From Mind to Form”：poem 作品樣本 + 主文案
+   ============================================================ */
+.mind-page--3 {
+  /* 左緣與左上標題（.mind-page__intro）對齊：同一條垂直線 */
+  --mp-quote-left: calc(var(--mp-rail-left) + var(--mp-content-gap));
+  /* 右緣內收，讓疊圖落在畫面中間偏右，同時為放大後的文字留出六行空間 */
+  --mp-quote-right: 8%;
+  /* 文字區塊整體上移，底部留白增多 */
+  --mp-quote-bottom: 13%;
+}
+
+/* poem 圖片放大並移到畫面中間偏右，文字平移到左側（row-reverse：圖片靠容器右緣）；
+   以寬度控制（原始比例 1065×1477），僅控制大小、不做任何影像處理 */
+.mind-page--3 .mind-page__aside {
+  width: clamp(300px, 23vw, 400px);
+  height: auto;
+  max-width: none;
+}
+
+.mind-page--3 .mind-page__quote--with-image {
+  flex-direction: row-reverse;
+  gap: clamp(20px, 1.6vw, 32px);
+  align-items: flex-end; /* 圖片底緣與文字末行底緣大致對齊 */
+}
+
+.mind-page--3 .mind-page__quote p {
+  flex: 1 1 auto;
+  min-width: 0;
+  /* 字號與 Page 2 長文案一致 */
+  font-size: clamp(26px, 2.08vw, 30px);
+  line-height: 1.4;
+}
+
+/* 可點擊的作品入口：常態完全無樣式，hover 僅極輕微上浮（無陰影 / 無光暈） */
+.mind-page__aside-link {
+  flex: 0 0 auto;
+  display: block;
+  line-height: 0; /* 消除 <a> 內圖片下方的基線空隙 */
+  cursor: pointer;
+}
+
+/* ---------- Page 3 扇形疊圖（poem1 / ep1 / ep2） ----------
+   容器即卡位 0（最前）的畫框；三張卡片同尺寸絕對疊放，
+   後兩張以 translate + 微旋轉向右階梯露出（GSAP 接管輪換）。
+   統一畫框比例 = poem1 原圖 1065×1477（poem1 零裁切，ep 照片 cover 填滿）。 */
+.mind-page__deck {
+  position: relative;
+  aspect-ratio: 1065 / 1477;
+}
+
+.mind-page__deck-card {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.mind-page__deck-card a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+  cursor: pointer;
+}
+
+.mind-page__deck-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  border-radius: 4px;
+  /* 疊放時讓每張卡邊緣可辨的極輕投影 */
+  box-shadow: 0 10px 28px rgba(28, 27, 25, 0.22);
+  background-color: #e0ded9;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* hover 輕微抖動：作用在 img 上，不與卡片槽位的 GSAP transform 衝突 */
+@media (hover: hover) {
+  .mind-page__deck-card:hover img {
+    animation: mind-deck-wiggle 0.34s ease;
+  }
+}
+
+@keyframes mind-deck-wiggle {
+  0%,
+  100% {
+    transform: none;
+  }
+  25% {
+    transform: rotate(-1.1deg) translate(-1px, 0.5px);
+  }
+  55% {
+    transform: rotate(0.9deg) translate(1px, -0.5px);
+  }
+  80% {
+    transform: rotate(-0.4deg);
+  }
+}
+
+/* 疊圖右下角 click 小字提示（落在向右露出的階梯末端） */
+.mind-page__deck-hint {
+  position: absolute;
+  right: -23%;
+  bottom: -8%;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: rgba(27, 25, 23, 0.42);
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (hover: hover) {
+  .mind-page__aside-link {
+    transition: transform 0.24s ease-out;
+    will-change: transform;
+  }
+
+  .mind-page__aside-link:hover {
+    transform: translateY(-6px) scale(1.01) rotate(-0.5deg);
+  }
+
+  .mind-page__aside-link:focus-visible {
+    transform: translateY(-6px) scale(1.01);
+  }
+}
+
+/* 1366 等常見筆電：略收圖寬保住六行指定斷行；字號與 Page 2 一致不再覆蓋 */
+@media (max-width: 1400px) {
+  .mind-page--3 .mind-page__aside {
+    width: clamp(250px, 19vw, 320px);
+  }
+}
+
+/* ============================================================
+   響應式：≥1100 嚴格採用上述 editorial 構成；
+   以下僅做縮放 / 避讓，不做手機版設計
+   ============================================================ */
+
+@media (max-width: 1100px) {
+  .mind-page {
+    margin-left: 58px;
+    --mp-rail-left: 150px;
+    --mp-year-gap: 82px;
+    --mp-content-gap: 40px;
+    --mp-quote-left: 42%;
+    --mp-quote-right: 3%;
+  }
+
+  .mind-page__year {
+    font-size: clamp(64px, 8vw, 92px);
+  }
+
+  .mind-page__quote p {
+    font-size: clamp(26px, 3.4vw, 32px);
+  }
+
+  /* Page 2 長文：平板區間容器再放寬、照片縮小、字號再收一級 */
+  .mind-page--2 {
+    --mp-quote-left: 30%;
+    --mp-quote-right: 2.5%;
+  }
+
+  .mind-page__aside {
+    height: clamp(160px, 24vh, 230px);
+  }
+
+  /* 平板區間書架照片仍保持放大後的主視覺比例，僅略收 */
+  .mind-page--2 .mind-page__aside {
+    height: clamp(260px, 46vh, 420px);
+  }
+
+  .mind-page--2 .mind-page__quote p {
+    font-size: clamp(19px, 2.5vw, 26px);
+  }
+
+  /* Page 3：平板區間再收圖寬與字號（左緣沿用 base calc，自動對齊標題） */
+  .mind-page--3 .mind-page__aside {
+    width: clamp(190px, 19vw, 240px);
+  }
+
+  .mind-page--3 .mind-page__quote p {
+    font-size: clamp(18px, 2vw, 22px);
+  }
+}
+
+@media (max-width: 768px) {
+  /* 極窄屏改為一般文件流，確保元素互不遮擋（本輪不做手機版設計） */
+  .mind-page {
+    height: auto;
+    min-height: 100vh;
+    margin-left: 44px;
+    padding: 52px 22px 44px 46px;
+    overflow: visible;
+    --mp-rail-left: 20px;
+  }
+
+  .mind-page__rail {
+    top: 24px;
+    bottom: 24px;
+  }
+
+  /* 極窄屏年份無處安放，先隱藏（aria-hidden 裝飾元素） */
+  .mind-page__year {
+    display: none;
+  }
+
+  .mind-page__intro,
+  .mind-page__quote {
+    position: static;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+  }
+
+  /* Page 2 窄屏：照片改堆疊在文字上方，避免擠壓 */
+  .mind-page__quote--with-image {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+  }
+
+  .mind-page__aside {
+    height: 200px;
+    max-width: 60%;
+  }
+
+  /* Page 2 窄屏：覆蓋桌面放大規則，回到小尺寸堆疊 */
+  .mind-page--2 .mind-page__aside {
+    height: 200px;
+    max-width: 60%;
+  }
+
+  /* Page 3 圖片以寬度控制，窄屏堆疊時改回小尺寸、圖上文下 */
+  .mind-page--3 .mind-page__aside {
+    width: min(54vw, 190px);
+    height: auto;
+  }
+
+  .mind-page--3 .mind-page__quote--with-image {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mind-page__intro {
+    max-width: 280px;
+  }
+
+  .mind-page__title {
+    font-size: 30px;
+  }
+
+  .mind-page__desc {
+    font-size: 15px;
+    margin-bottom: 44px;
+  }
+
+  .mind-page__quote p {
+    font-size: clamp(20px, 6vw, 25px);
+    line-height: 1.38;
+  }
+
+  /* Page 2 長文在手機區間一併縮小，避免高優先級桌面板規則溢出 */
+  .mind-page--2 .mind-page__quote p {
+    font-size: clamp(17px, 5.2vw, 21px);
+    line-height: 1.42;
+  }
+}

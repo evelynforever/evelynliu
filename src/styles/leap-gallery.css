@@ -1,0 +1,91 @@
+/* ============================================================
+   THE LEAP · 影像畫廊
+   黑底；首圖固定置中，由中心圓點逐漸顯現，之後十四張照片自其背後射出
+   ============================================================ */
+
+.leap-gallery {
+  position: relative;
+  /* 滾動長度：HERO_REVEAL 0.9 + HERO_HOLD 0.05 + (14−1)×(0.7/3) + DUR 0.7 + TAIL 0.15 ≈ 4.83 個時間單位 */
+  height: 580vh;
+  background-color: #1c1b19;
+}
+
+.leap__stage {
+  position: relative;
+  height: 100vh;
+  /* 明確扣掉導覽列寬度：被 pin 成 fixed 後寬度才不會回彈成整個視窗 */
+  width: calc(100% - 76px);
+  margin-left: 76px;
+  overflow: hidden;
+  background-color: #1c1b19;
+}
+
+/* 首圖：白框拍立得，永遠停在可用區域正中，不隨滾動改變大小。
+   初始 clip-path 為中心一個圓點，由 GSAP 擴大圓形窗口顯現整張照片 */
+.leap__hero {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(250px, 26vw, 380px);
+  height: auto;
+  z-index: 2;
+  clip-path: circle(0% at 50% 50%);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* 飛行照片：尺寸以長邊為準，保留各自原始比例（不裁切） */
+.leap__photo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+  user-select: none;
+  -webkit-user-drag: none;
+  will-change: transform, opacity;
+}
+
+.leap__photo--portrait {
+  height: clamp(200px, 36vh, 340px);
+  width: auto;
+}
+
+.leap__photo--landscape {
+  width: clamp(210px, 26vw, 350px);
+  height: auto;
+}
+
+/* ---------- 響應式：僅調整導覽列讓出的寬度，尺寸由 clamp 自動縮放 ---------- */
+
+@media (max-width: 1024px) {
+  .leap__stage {
+    width: calc(100% - 58px);
+    margin-left: 58px;
+  }
+}
+
+@media (max-width: 768px) {
+  .leap__stage {
+    width: calc(100% - 44px);
+    margin-left: 44px;
+  }
+
+  .leap-gallery {
+    height: 490vh;
+  }
+
+  .leap__hero {
+    width: clamp(190px, 52vw, 260px);
+  }
+
+  .leap__photo--portrait {
+    height: clamp(130px, 20vh, 200px);
+  }
+
+  .leap__photo--landscape {
+    width: clamp(150px, 34vw, 230px);
+  }
+}

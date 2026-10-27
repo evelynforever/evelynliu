@@ -1,0 +1,112 @@
+/* ============================================================
+   THE MIND · 三頁連讀舞台（MindPages.jsx）
+   桌面：三頁疊放在同一 pinned 舞台，共用底圖層 + 米灰遮罩；
+        滾動驅動文字上滑切換、底圖 crossfade。
+   窄屏（≤768px）：退回普通文件流，各頁使用自帶背景。
+   ============================================================ */
+
+/* ---------- 外層滾動容器：提供 scrub 行程 ----------
+   高度 = (timeline 單位總長 + 1) × 100vh；--stack-units 由 MindPages.jsx
+   依時間軸常數算出（停留 3 + 切換 2.8 + 離場 1 = 6.8） */
+.mind-stack {
+  position: relative;
+  height: calc((var(--stack-units, 6.8) + 1) * 100vh);
+}
+
+/* ---------- pinned 舞台 ---------- */
+.mind-stack__stage {
+  position: relative;
+  height: 100vh;
+  width: calc(100% - 76px); /* 讓出固定 SideNav */
+  margin-left: 76px;
+  overflow: hidden;
+  /* 與 PROLOGUE 結尾淺灰、下一章舞台底色完全一致 → 交棒處不會出現分界線 */
+  background: #dedddb;
+}
+
+/* ---------- 底圖層：三張疊放，opacity 由 GSAP 控制 ---------- */
+.mind-stack__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: grayscale(0.55) contrast(0.94) saturate(0.9);
+  opacity: 0; /* 三張底圖初始全隱；首頁底圖由 GSAP 進場段漸顯 */
+  z-index: 0;
+}
+
+.mind-stack__bg--mono {
+  filter: grayscale(1) contrast(0.8) brightness(1.05);
+}
+
+/* ---------- 共用米灰遮罩（與各頁 .mind-page__veil 同濃度） ---------- */
+.mind-stack__veil {
+  position: absolute;
+  inset: 0;
+  background: rgba(219, 218, 214, 0.64);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ---------- 三頁內容疊放 ---------- */
+.mind-stack__page {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+/* 桌面端：stack 內的每頁改為鋪滿舞台的透明容器，
+   並隱藏各自帶的底圖 / 遮罩（統一由 stack 層提供） */
+@media (min-width: 769px) {
+  .mind-stack .mind-page {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    margin-left: 0;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  .mind-stack .mind-page__photo,
+  .mind-stack .mind-page__veil {
+    display: none;
+  }
+
+  /* 非首頁文字初始停在畫面下方一屏之外（JS 接管前的防閃爍兜底） */
+  .mind-stack__page--rest .mind-page__year,
+  .mind-stack__page--rest .mind-page__intro,
+  .mind-stack__page--rest .mind-page__quote {
+    transform: translateY(100vh);
+  }
+
+  /* 非首頁虛線時間軸同樣停在下方（保留 translateX(-50%) 的水平居中） */
+  .mind-stack__page--rest .mind-page__rail {
+    transform: translate(-50%, 100vh);
+  }
+}
+
+/* ---------- 窄屏：退回普通文件流 ---------- */
+@media (max-width: 768px) {
+  .mind-stack {
+    height: auto;
+  }
+
+  .mind-stack__stage {
+    height: auto;
+    width: 100%;
+    margin-left: 0;
+    overflow: visible;
+    background: transparent;
+  }
+
+  /* stack 級底圖與遮罩隱藏，各頁顯示自帶背景 */
+  .mind-stack__bg,
+  .mind-stack__veil {
+    display: none;
+  }
+
+  .mind-stack__page {
+    position: static;
+  }
+}

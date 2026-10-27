@@ -1,0 +1,16 @@
+/* ============================================================
+   ParticlePortrait — 粒子肖像容器樣式
+   位置沿用 .figure-anchor（prologue.css），這裡只補 canvas 本身
+   ============================================================ */
+
+.particle-portrait {
+  /* 比例由 JS 依原圖動態設定 aspect-ratio */
+}
+
+.particle-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}

@@ -1,0 +1,127 @@
+/* ============================================================
+   左側固定章節導覽 — 框限式（editorial index）
+   · 貼齊左緣的窄欄，全高
+   · 右側一條粗黑直線作為邊框
+   · 細橫線分割每個儲存格
+   · 垂直排列的 serif 章節名
+   · 作用中章節：黑底白字
+   ============================================================ */
+
+.side-nav {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 76px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  background-color: #e3e0d8;
+  border-right: 2px solid #1c1b19;
+}
+
+/* 章節儲存格 */
+
+.side-nav__list {
+  list-style: none;
+  margin: 0;
+  /* 頂部留白：四格方框不再從欄頂開始占滿整條左欄 */
+  padding: clamp(72px, 15vh, 150px) 0 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.side-nav__item {
+  flex: 1 1 0;
+  min-height: 0; /* 保證四格永遠等高，不受垂直文字的最小內容高度影響 */
+  display: flex;
+}
+
+/* 每個章節是一顆整格按鈕：點擊跳至該板塊第一頁 */
+.side-nav__cell {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid #1c1b19;
+  background-color: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* 第一格補頂線封口，四格形成完整方格陣列 */
+.side-nav__item:first-child .side-nav__cell {
+  border-top: 1px solid #1c1b19;
+}
+
+.side-nav__item:last-child .side-nav__cell {
+  border-bottom: none;
+}
+
+.side-nav__cell:hover:not(.is-active) {
+  background-color: rgba(28, 27, 25, 0.055);
+}
+
+.side-nav__cell:focus-visible {
+  outline: 1px solid #1c1b19;
+  outline-offset: -6px;
+}
+
+/* 垂直襯線標題 */
+.side-nav__label {
+  writing-mode: vertical-rl;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 21px;
+  letter-spacing: 0.035em;
+  color: #1c1b19;
+  line-height: 1;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+/* 作用中章節：黑底白字 */
+
+.side-nav__cell.is-active {
+  background-color: #2b2a27;
+}
+
+.side-nav__cell.is-active .side-nav__label {
+  color: #f4f2ec;
+}
+
+/* ---------- 響應式 ---------- */
+
+@media (max-width: 1024px) {
+  .side-nav {
+    width: 58px;
+  }
+
+  .side-nav__label {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .side-nav {
+    width: 44px;
+    border-right-width: 3px;
+  }
+
+  .side-nav__list {
+    padding-top: clamp(44px, 10vh, 90px);
+  }
+
+  .side-nav__label {
+    font-size: 13px;
+    letter-spacing: 0.03em;
+  }
+}

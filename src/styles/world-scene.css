@@ -1,0 +1,375 @@
+/* ============================================================
+   THE WORLD · Typographic Tree（文字構成的樹枝）
+   背景 #F1F2E9 淺暖白。畫面只有一根由英文小字構成的
+   橫向枝椏：無標題、無資訊卡、無其他裝飾。
+   ============================================================ */
+
+.world-scene {
+  position: relative;
+  height: 100vh;
+  background-color: #f1f2e9;
+}
+
+.world-scene__stage {
+  position: relative;
+  height: 100vh;
+  /* 與其他章節一致：讓出左側導覽列寬度 */
+  width: calc(100% - 76px);
+  margin-left: 76px;
+  overflow: hidden;
+  background-color: #f1f2e9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================================
+   左上角編輯式標題 —— 與葉片同時淡入
+   分三行：Branches / of / Experience；"of" 縮小並內縮，
+   形成 editorial 對稱感。字色取自 annotation__name 的紙面褐。
+   ============================================================ */
+
+.world-title {
+  position: absolute;
+  top: 48px;
+  left: 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  pointer-events: none;
+  opacity: 0; /* GSAP 從 0 淡入 */
+  transform: translateY(0);
+  z-index: 4;
+}
+
+.world-title__line {
+  font-family: var(--font-serif);
+  font-size: 46px;
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: 0.005em;
+  color: #62574f;
+  white-space: nowrap;
+}
+
+.world-title__line--of {
+  font-size: 22px;
+  font-weight: 400;
+  font-style: italic;
+  color: #90867c;
+  padding-left: 12px;
+  letter-spacing: 0.02em;
+}
+
+.world-title__hint {
+  margin-top: 18px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #a9a094;
+  white-space: nowrap;
+}
+
+.world-branch__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ============================================================
+   葉片互動 + Botanical Editorial Annotation
+   文字直接落在紙面上：無卡片、無邊框、無陰影、無底色。
+   全部座標由原圖像素換算百分比，因此與圖片同步縮放。
+   ============================================================ */
+
+.world-annotations {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* ---- 透明熱區（不可見，覆蓋真實葉片位置）---- */
+.leaf-spot {
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  pointer-events: auto;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.leaf-spot:focus {
+  outline: none;
+}
+
+.leaf-spot:focus-visible {
+  outline: 1px solid rgba(183, 173, 161, 0.9);
+  outline-offset: 3px;
+}
+
+/* 葉片以原圖裁出的同一片葉子像素覆蓋自身（透明背景），
+   因此可以真的擺動而不露出紙面色塊；輕輕搖曳是「這裡可移入」的提示 */
+.leaf-spot__paint {
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  opacity: 1;
+  transform: scale(1.04);
+  transform-origin: center;
+  filter: brightness(1);
+  animation: leafSway 6.4s ease-in-out infinite;
+  transition:
+    transform 160ms ease-out,
+    filter 160ms ease-out;
+  pointer-events: none;
+}
+
+/* 微幅搖曳：像被極輕的風吹動，同時微微提亮一瞬 */
+@keyframes leafSway {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1.04);
+    filter: brightness(1);
+  }
+  22% {
+    transform: rotate(-5.5deg) scale(1.052);
+    filter: brightness(1.1);
+  }
+  46% {
+    transform: rotate(4.6deg) scale(1.046);
+    filter: brightness(1.08);
+  }
+  70% {
+    transform: rotate(-2deg) scale(1.042);
+    filter: brightness(1.03);
+  }
+}
+
+.leaf-spot:hover .leaf-spot__paint,
+.leaf-spot:focus-visible .leaf-spot__paint,
+.leaf-spot.is-active .leaf-spot__paint {
+  transform: scale(1.07);
+  filter: brightness(1.1) saturate(1.06);
+  /* 移入後停止擺動，交給過渡接管 */
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leaf-spot__paint {
+    animation: none;
+  }
+
+  .world-title {
+    /* 運動偏好：直接顯示，不等淡入 */
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- 引導線（僅 Vocay 一組需要）---- */
+.annotation-guides {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.annotation-guides__line {
+  stroke: #b7ada1;
+  stroke-width: 0.7;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+  transition: opacity 160ms ease-out;
+}
+
+.annotation-guides__line.is-on {
+  opacity: 0.85;
+  transition-delay: 60ms;
+}
+
+/* ---- 註釋文字 ---- */
+.annotation {
+  position: absolute;
+  width: max-content;
+  max-width: 300px;
+  pointer-events: none;
+}
+
+.annotation__name,
+.annotation__role,
+.annotation__desc,
+.annotation__future {
+  margin: 0;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 200ms ease-out,
+    transform 200ms ease-out;
+}
+
+.annotation__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 0.005em;
+  color: #62574f;
+}
+
+.annotation.is-right .annotation__name {
+  justify-content: flex-end;
+}
+
+.annotation__logo {
+  height: 13px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.78;
+}
+
+.annotation__role {
+  margin-top: 9px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: #90867c;
+}
+
+.annotation__desc {
+  margin-top: 9px;
+  max-width: 300px;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: #70665d;
+}
+
+/* 墨跡印上紙面的三段延遲（80 / 140 / 190ms，總約 340ms） */
+.annotation.is-open .annotation__name {
+  opacity: 1;
+  transform: none;
+  transition-duration: 180ms;
+  transition-delay: 80ms;
+}
+
+.annotation.is-open .annotation__role {
+  opacity: 1;
+  transform: none;
+  transition-duration: 160ms;
+  transition-delay: 140ms;
+}
+
+.annotation.is-open .annotation__desc {
+  opacity: 1;
+  transform: none;
+  transition-duration: 150ms;
+  transition-delay: 190ms;
+}
+
+/* 第六片葉子：安靜的開放式結尾，稍慢（約 450ms） */
+.annotation--future {
+  pointer-events: none;
+}
+
+.annotation__future {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 30px;
+  line-height: 1.2;
+  color: #81786c;
+}
+
+.annotation--future.is-open .annotation__future {
+  opacity: 1;
+  transform: none;
+  transition-duration: 380ms;
+  transition-delay: 70ms;
+}
+
+@media (max-width: 1024px) {
+  .world-scene__stage {
+    width: calc(100% - 58px);
+    margin-left: 58px;
+  }
+
+  .world-title {
+    top: 36px;
+    left: 40px;
+  }
+
+  .world-title__line {
+    font-size: 36px;
+  }
+
+  .world-title__line--of {
+    font-size: 18px;
+    padding-left: 8px;
+  }
+
+  .world-title__hint {
+    margin-top: 14px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+  }
+
+  .annotation {
+    max-width: 240px;
+  }
+
+  .annotation__name {
+    font-size: 21px;
+  }
+
+  .annotation__desc {
+    max-width: 240px;
+    font-size: 12.5px;
+  }
+
+  .annotation__future {
+    font-size: 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .world-scene__stage {
+    width: calc(100% - 44px);
+    margin-left: 44px;
+  }
+
+  .world-title {
+    top: 28px;
+    left: 28px;
+  }
+
+  .world-title__line {
+    font-size: 26px;
+    font-weight: 400;
+  }
+
+  .world-title__line--of {
+    font-size: 15px;
+    padding-left: 6px;
+  }
+
+  .world-title__hint {
+    margin-top: 10px;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+  }
+}

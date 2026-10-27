@@ -1,0 +1,240 @@
+/* ============================================================
+   THE MIND · Page 4 — 長江背景 × 兩張可點擊的影像作品封面
+   一高一低、一左一右的錯落構成；細線 / 編號 / 箭頭圖示點綴；
+   hover 時整張封面輕微跳動，暗示可點擊外連。
+   desktop-first，基準 1440 × 900。
+   ============================================================ */
+
+.mind-page__works {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+/* ---------- 作品封面（<a>）：直式 9:16，圖片 + 下方資訊列 ---------- */
+
+.work {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  width: clamp(280px, 22.5vw, 324px);
+  color: var(--mp-ink);
+  text-decoration: none;
+  cursor: pointer;
+  will-change: transform;
+}
+
+.work__img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  display: block;
+  /* 封面維持原色，在黑白背景中成為視覺焦點 */
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* 資訊列：編號 — 細線 — 名稱 — 外連箭頭 */
+.work__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 13px;
+  font-family: var(--font-sans);
+  color: #5b564e;
+}
+
+.work__index {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: rgba(27, 25, 23, 0.55);
+  flex: 0 0 auto;
+}
+
+.work__rule {
+  flex: 1 1 auto;
+  height: 1px;
+  background-color: rgba(27, 25, 23, 0.32);
+}
+
+.work__label {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.work__arrow {
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  opacity: 0.55;
+  color: var(--mp-ink);
+  transition:
+    transform 0.28s ease-out,
+    opacity 0.28s ease-out;
+}
+
+/* A：偏左、偏高、略大 */
+.work--a {
+  left: 30%;
+  top: 8%;
+}
+
+/* B：偏右、偏低、略小，與 A 形成斜向錯落 */
+.work--b {
+  right: 4%;
+  bottom: 6%;
+  width: clamp(240px, 19vw, 290px);
+}
+
+/* ---------- hover：整張封面輕跳一下 + 箭頭亮起外推 ---------- */
+
+@media (hover: hover) {
+  .work:hover,
+  .work:focus-visible {
+    animation: work-hop 0.55s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  .work:hover .work__arrow,
+  .work:focus-visible .work__arrow {
+    opacity: 1;
+    transform: translate(3px, -3px);
+  }
+
+  .work:hover .work__img,
+  .work:focus-visible .work__img {
+    box-shadow: 0 18px 38px -18px rgba(27, 25, 23, 0.45);
+  }
+
+  .work__img {
+    transition: box-shadow 0.3s ease-out;
+  }
+
+  .work:focus-visible {
+    outline: none;
+  }
+}
+
+@keyframes work-hop {
+  0% {
+    transform: translateY(0);
+  }
+  42% {
+    transform: translateY(-11px);
+  }
+  72% {
+    transform: translateY(3px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* ---------- 右上小標：膠卷圖示 + 標題 + 細線 ---------- */
+
+.mp4-head {
+  position: absolute;
+  z-index: 2;
+  top: 9%;
+  right: 4%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mp4-head__icon {
+  width: 19px;
+  height: 19px;
+  color: rgba(27, 25, 23, 0.62);
+  flex: 0 0 auto;
+}
+
+.mp4-head__title {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #5b564e;
+}
+
+.mp4-head__rule {
+  width: clamp(48px, 6vw, 88px);
+  height: 1px;
+  background-color: rgba(27, 25, 23, 0.3);
+}
+
+/* ---------- 常見筆電：略收尺寸 ---------- */
+@media (max-width: 1400px) {
+  .work--a {
+    left: 27%;
+    width: clamp(250px, 21vw, 290px);
+  }
+
+  .work--b {
+    right: 3%;
+    width: clamp(220px, 18vw, 262px);
+  }
+}
+
+/* ---------- 平板區間：再收一級，保持錯落 ---------- */
+@media (max-width: 1100px) {
+  .work--a {
+    left: 24%;
+    top: 10%;
+    width: clamp(220px, 26vw, 260px);
+  }
+
+  .work--b {
+    right: 2%;
+    bottom: 8%;
+    width: clamp(190px, 22vw, 230px);
+  }
+
+  .mp4-head {
+    top: 7%;
+  }
+}
+
+/* ---------- 極窄屏：脫離絕對定位改為文件流，左右錯開 ---------- */
+@media (max-width: 768px) {
+  .mp4-head {
+    position: relative;
+    top: auto;
+    right: auto;
+    z-index: 2;
+    margin: 8px 0 6px auto;
+  }
+
+  .mp4-head__rule {
+    width: 44px;
+  }
+
+  .mind-page__works {
+    position: relative;
+    inset: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 38px;
+    margin-top: 44px;
+  }
+
+  .work {
+    position: static;
+    width: min(76vw, 300px);
+  }
+
+  .work--b {
+    align-self: flex-end;
+  }
+
+  @media (hover: hover) {
+    .work:hover,
+    .work:focus-visible {
+      animation: none;
+      transform: translateY(-6px);
+      transition: transform 0.25s ease-out;
+    }
+  }
+}

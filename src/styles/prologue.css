@@ -1,0 +1,245 @@
+/* ============================================================
+   PROLOGUE — 長滾動敘事區
+   結構：
+   .prologue            高 600vh 的滾動軌道
+   .prologue__stage     100vh 舞台，由 ScrollTrigger pin 住
+   ============================================================ */
+
+.prologue {
+  position: relative;
+  height: 600vh;
+  background-color: #d2d4c7;
+}
+
+.prologue__stage {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  /* 與 evelyn-cover.png 紙張背景完全一致，消除圖片界限 */
+  background-color: #d2d4c7;
+}
+
+/* ---------- 章節交棒遮罩：結尾整頁漸隱為淺灰 ---------- */
+
+/* 顏色與下一章舞台底色完全一致（#dedddb），交棒時不會出現分界線；
+   opacity 由 GSAP 於結尾淡入 */
+.prologue__gray-flush {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background-color: #dedddb;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- 左上章節標記（閃開左側章節列） ---------- */
+
+.prologue__eyebrow {
+  position: absolute;
+  top: 48px;
+  left: calc(76px + 40px);
+  z-index: 4;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  color: var(--ink-muted);
+}
+
+/* ---------- 背景延展層：提取插畫紙張色調與紋理 ---------- */
+
+.portrait__bg-extension {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url('/evelyn-cover.png');
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.12);
+  /* 大幅模糊、降飽和、微提亮度，只留下紙張色調與極淡残影 */
+  filter: blur(32px) saturate(0.65) contrast(0.9) brightness(1.05);
+  opacity: 0.11;
+  pointer-events: none;
+}
+
+/* ---------- 人物主視覺：雙層插畫（rough print + finished） ---------- */
+
+.portrait {
+  position: absolute;
+  top: 4vh; /* 頭頂完整露出 */
+  left: 1vw; /* 人物偏右，右肩僅輕微裁切 */
+  width: 101vw; /* 較上一版縮小約 12%，保留 85%–90% 插畫資訊 */
+  z-index: 1;
+  pointer-events: none;
+  /* 邊緣羽化：重點處理 top / left，少量 right，bottom 儘量少 */
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent 0, #000 100px),
+    linear-gradient(to right, transparent 0, #000 130px),
+    linear-gradient(to left, transparent 0, #000 55px),
+    linear-gradient(to top, transparent 0, #000 8px);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, transparent 0, #000 100px),
+    linear-gradient(to right, transparent 0, #000 130px),
+    linear-gradient(to left, transparent 0, #000 55px),
+    linear-gradient(to top, transparent 0, #000 8px);
+  mask-composite: intersect;
+}
+
+/* LAYER 1 — PALE BASE：模糊草稿（JS 隨滾動對焦），低飽和鋪底 */
+.portrait__pale {
+  position: relative;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  opacity: 0.26;
+  filter: blur(12px) saturate(0.22) contrast(0.92) brightness(1.08);
+}
+
+/* LAYER 2 — PIGMENT MID：第二遍 pigment（中間過渡） */
+.portrait__mid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  -webkit-user-drag: none;
+  opacity: 0;
+  filter: saturate(0.55) contrast(0.97) brightness(1.03);
+  pointer-events: none;
+}
+
+/* LAYER 3 — FINAL PAINTING：原始完整插畫（無任何濾鏡） */
+.portrait__final {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  -webkit-user-drag: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- 文案舞台（全螢幕軌道，文字在其中垂直移動） ---------- */
+
+.lines-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.line {
+  position: absolute;
+  inset: 0;
+}
+
+.line__text {
+  position: absolute;
+  left: 42%;
+  top: 50%;
+  width: clamp(300px, 34vw, 560px);
+  transform: translate(-50%, -50%);
+  /* 手寫速寫體（參考 Hesse 簽名）：細而快的連筆、鉛灰色墨跡 */
+  font-family: 'La Belle Aurore', var(--font-serif), cursive;
+  font-weight: 400;
+  font-size: clamp(2rem, 3.9vw, 3.9rem);
+  line-height: 1.28;
+  letter-spacing: 0.01em;
+  color: #6f6c6e;
+  will-change: transform, opacity;
+}
+
+/* ---------- 底部 SCROLL 提示 ---------- */
+
+.scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 46px;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.scroll-hint__label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.44em;
+  padding-left: 0.44em;
+  color: var(--ink-muted);
+}
+
+.scroll-hint__rule {
+  width: 1px;
+  height: 44px;
+  background: linear-gradient(to bottom, var(--ink-muted), transparent);
+}
+
+/* ============================================================
+   響應式：桌面優先，平板與手機做基本兼容
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .prologue__eyebrow {
+    left: calc(58px + 28px);
+  }
+
+  .portrait {
+    top: 5vh;
+    left: 0;
+    width: 110vw;
+  }
+
+  .line__text {
+    left: 40%;
+    width: 38vw;
+  }
+}
+
+@media (max-width: 768px) {
+  .prologue {
+    height: 520vh;
+  }
+
+  .prologue__eyebrow {
+    top: 32px;
+    left: calc(56px + 18px);
+  }
+
+  .portrait {
+    top: 3vh;
+    left: -22vw;
+    width: 123vw;
+    opacity: 0.6;
+    -webkit-mask-image:
+      linear-gradient(to bottom, transparent 0, #000 60px),
+      linear-gradient(to right, transparent 0, #000 80px),
+      linear-gradient(to left, transparent 0, #000 30px),
+      linear-gradient(to top, transparent 0, #000 5px);
+    mask-image:
+      linear-gradient(to bottom, transparent 0, #000 60px),
+      linear-gradient(to right, transparent 0, #000 80px),
+      linear-gradient(to left, transparent 0, #000 30px),
+      linear-gradient(to top, transparent 0, #000 5px);
+  }
+
+  .line__text {
+    left: 50%;
+    top: 56%;
+    width: 80vw;
+    font-size: clamp(1.6rem, 7vw, 2.3rem);
+    text-align: center;
+  }
+}

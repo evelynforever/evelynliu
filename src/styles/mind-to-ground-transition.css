@@ -1,0 +1,286 @@
+/* ============================================================
+   THE MIND → THE GROUND · 章節過渡
+   .mgt        長滾動軌道（總長度由 --mgt-scroll-height 控制）
+   .mgt__stage 100vh pinned 舞台：暖灰底 + 鋼筆筆尖
+   ============================================================ */
+
+.mgt {
+  /* 滾動長度 = 鋼筆升起段（PEN_RISE 1.6 × 33.56 ≈ 54vh）
+     + 筆尖放大段（CIRCLE_GROW 9 × 33.56 ≈ 302vh）
+     + 圓孔收黑段（BLACKOUT 1 × 33.56 ≈ 34vh）
+     + 文案上滑與疊影詞輪替（ESSAY_RISE 2.6 + WORDS_SWITCH 3 + ESSAY_EXIT 2.4 ≈ 268vh）
+     + 校門照完整滑過（IMAGE_RISE 5.4 + IMAGE_HOLD 0.6 ≈ 201vh）
+     改 PEN_RISE / CIRCLE_GROW / BLACKOUT / ESSAY_* / WORDS_SWITCH / IMAGE_* 後需同步重算：
+     (PEN_RISE + CIRCLE_GROW + BLACKOUT + ESSAY_RISE + WORDS_SWITCH + ESSAY_EXIT + IMAGE_RISE + IMAGE_HOLD) × 33.56 */
+  --mgt-scroll-height: 859vh;
+
+  /* 背景色：非常淺的暖灰，非純白 */
+  --mgt-bg: #dedddb;
+
+  position: relative;
+  height: var(--mgt-scroll-height);
+  /* 讓鋼筆舞台接在上一章「最後一頁已完全淡成純 #dedddb」的位置：
+     MindPages 的末頁離場在 pin 結束前約 0.7 屏處全部退盡（遮罩、底圖、文字皆為 0），
+     因此上移 107vh —— 兩節底色相同且重疊處已無任何殘留內容 → 無色差、無裁切 */
+  margin-top: -107vh;
+}
+
+.mgt__stage {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  /* 閃開左側固定導覽列（與 THE MIND 各頁相同的留白） */
+  margin-left: 76px;
+  background-color: var(--mgt-bg);
+}
+
+/* ---------- 鋼筆筆尖：底部中央。
+   升起：GSAP yPercent 105 → 12；
+   之後整體放大：GSAP scale（原點固定在底緣中央 → 平切底邊不上移，筆尖只向上生長） ---------- */
+
+.mgt__pen {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  z-index: 0; /* 舞台最底層：照片層與文案層都壓在其上 */
+  height: 52vh;
+  will-change: transform;
+}
+
+.mgt__pen svg {
+  display: block;
+  height: 100%;
+  width: auto;
+  /* 圓孔放大後遠超 viewBox 範圍，必須允許 svg 內容溢出，
+     否則放大過程會被 viewBox 矩形裁掉 */
+  overflow: visible;
+}
+
+/* ---------- 照片層：HTML 覆疊 + clip-path 圓形窗口 ----------
+   不放 SVG foreignObject（極端放大下瀏覽器對 FO 降解析度點陣化 → 照片模糊）；
+   覆疊層與 stage 同範圍，clip-path 圓形由 JS 每幀對齊 SVG 圓孔的屏幕矩形，
+   strip 以原生 260px 尺寸渲染 → 清晰。圓窗外的照片被 clip-path 完全裁掉。 */
+
+.photo-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* 在筆身（z0）之上 */
+  pointer-events: none;
+  clip-path: circle(0px at 50% 50%); /* 初始完全隱藏，JS 每幀更新 */
+}
+
+.photo-strip {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--photo-gap, 24px);
+  width: max-content;
+}
+
+/* 覆疊層內 strip：位置與透明度由 JS 每幀寫入（translate 對齊圓心 + 滑入/橫移） */
+.photo-overlay .photo-strip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  will-change: transform;
+}
+
+/* 每張照片框：統一高度 260px、4:3，圖片 cover 填滿不變形 */
+.photo-frame {
+  flex: none;
+  width: var(--photo-w, 346.67px);
+  height: var(--photo-h, 260px);
+  overflow: hidden;
+}
+
+/* 豎版相框（shudong.jpg 1080×1440 = 3:4 豎圖）：
+   高度與其他照片一致（260px），寬度按 3:4 收窄為 195px，
+   圖片 cover 恰好填滿 → 零裁切、完整顯示紙盒 */
+.photo-frame--portrait {
+  width: calc(var(--photo-h, 260px) * 0.75);
+}
+
+.photo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* ---------- DEBUG_GALLERY 開發預覽（僅開發用） ----------
+   暫時解除圓形裁切：在畫面中央顯示完整 Photo Strip；
+   鋼筆動畫程式碼完全不動。 */
+
+.debug-gallery {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  padding: 28px;
+  background: #1e1c19;
+  outline: 1px dashed rgba(222, 221, 219, 0.4);
+}
+
+/* ---------- THE GROUND 開篇文案 ----------
+   與鋼筆同一個 pinned 舞台：圓孔收黑後由 GSAP 將整塊文案自畫面底端推上來。
+   兩列、小字級、暖淺灰，貼近參考圖的編輯排版。 */
+
+.mgt__essay-layer {
+  position: absolute;
+  inset: 0;
+  /* .mgt__stage 有 margin-left:76px 且寬度 100% → 右側會超出視窗 76px；
+     這裡補回同樣的內距，文案才會落在可視區域正中、不被右邊緣切掉 */
+  padding-right: 76px;
+  z-index: 1; /* 與字幕同層，DOM 在後 → 收黑後蓋在一切之上 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.mgt__essay-block {
+  width: min(1260px, 90%);
+  display: flex;
+  flex-direction: column;
+}
+
+.mgt__essay {
+  width: 100%;
+  columns: 2;
+  column-gap: clamp(40px, 4.2vw, 64px);
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: clamp(16px, 1.32vw, 20px);
+  line-height: 1.58;
+  letter-spacing: normal;
+  color: #c5c5c5;
+  text-align: left;
+}
+
+.mgt__essay p {
+  margin: 0;
+}
+
+.mgt__essay p + p {
+  margin-top: 1.1em;
+}
+
+/* ---------- 巨型疊影詞（RESPONSIBILITY / ASPIRATION / COURAGE） ----------
+   三個詞共用同一個視覺區域、同一基線，只靠水平微錯位與透明度分層；
+   高亮詞 0.85，其餘 0.07，透明度由 GSAP 隨滾動切換。 */
+
+.mgt__words {
+  position: relative;
+  width: 100%;
+  height: clamp(64px, 10vw, 158px);
+  margin-top: clamp(36px, 7vh, 88px);
+}
+
+.mgt__word {
+  --dx: 0px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(calc(-50% + var(--dx)), -50%);
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-style: normal;
+  font-size: clamp(38px, 9vw, 146px);
+  line-height: 0.9;
+  letter-spacing: 0.015em;
+  white-space: nowrap;
+  text-transform: uppercase;
+  color: #d5d3cd;
+  opacity: 0.07;
+  will-change: opacity;
+}
+
+/* 少量水平錯位，形成層層重疊的殘影（仍屬同一視覺區域） */
+.mgt__word--1 {
+  --dx: 0px;
+  opacity: 0.85;
+}
+
+.mgt__word--2 {
+  --dx: -14px;
+}
+
+.mgt__word--3 {
+  --dx: 16px;
+}
+
+/* ---------- THE GROUND 校門照 ----------
+   文案完全滑出頂端後，由 GSAP 將整張照片自底端推上來。
+   保持原圖的豎向構圖：整寬、高度依原比例自然延伸（不裁切、不拉伸），
+   因此圖片比一屏高，滑動過程會把由上到下的內容完整帶過一遍。 */
+
+.mgt__image-layer {
+  position: absolute;
+  inset: 0;
+  /* 左右各留一條細縫露出淺灰底（參考圖的紙張邊距）；
+     右邊多扣左側導覽列的寬度，讓照片在可視區域內真正左右對稱 */
+  padding: 0 calc(clamp(36px, 3.8vw, 64px) + 76px) 0 clamp(36px, 3.8vw, 64px);
+  /* 底色預設透明：這層覆蓋整個舞台，若一開始就不透明會蓋住字幕與文案；
+     淺灰底由 GSAP 在照片進場時才淡入（見 MindToGroundTransition） */
+  background-color: transparent;
+  z-index: 2; /* 壓在筆身與圓孔之上；文案層（z1）在它之前已離場 */
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.mgt__image {
+  display: block;
+  /* 調整至占頁面畫幅 2/3 的大小；
+     左右空隙由 auto 對齊均攤 */
+  width: clamp(240px, 66.67vw, 1600px);
+  height: auto;
+  margin: 0 auto;
+  /* 初始整張停在畫面下方；進場位置由 GSAP 接管 */
+  transform: translateY(100%);
+  will-change: transform;
+}
+
+/* ---------- 響應式：只做留白與字級收斂，結構完全不變 ---------- */
+
+@media (max-width: 1024px) {
+  .mgt__stage {
+    margin-left: 58px;
+  }
+
+  .mgt__essay-layer {
+    padding-right: 58px;
+  }
+
+  .mgt__image-layer {
+    padding: 0 calc(clamp(36px, 3.8vw, 64px) + 58px) 0 clamp(36px, 3.8vw, 64px);
+  }
+}
+
+@media (max-width: 768px) {
+  .mgt {
+    /* 鋼筆段（PEN_RISE × 28.12 ≈ 45vh）
+       + 筆尖放大段（CIRCLE_GROW × 28.12 ≈ 253vh）+ 收黑段（28.12 ≈ 28vh） */
+    --mgt-scroll-height: 326vh;
+    /* 窄屏上一章是普通文件流，不能用负边距压住内文 */
+    margin-top: 0;
+  }
+
+  .mgt__stage {
+    margin-left: 44px;
+  }
+
+  .mgt__pen {
+    height: 44vh;
+  }
+
+  /* 窄屏：長文與校門照改由 GroundOpening 以靜態頁依序呈現 */
+  .mgt__essay-layer,
+  .mgt__image-layer {
+    display: none;
+  }
+}
